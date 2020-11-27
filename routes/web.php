@@ -40,6 +40,9 @@ Route::group(['prefix' => 'admin','namespace'=>'Admin','as'=>'admin-'], function
             Route::get('/','PostController@index')->name('index');
             Route::get('/add','PostController@create')->name('add');
             Route::post('/add','PostController@store')->name('add');
+            Route::get('/edit/{id}','PostController@edit')->name('edit');
+            Route::post('/update/{id}','PostController@update')->name('update');
+            Route::post('/delete/{id}','PostController@destroy')->name('delete');
         });
         Route::group(['prefix'=>'category','as'=>'category-'],function(){
             Route::get('/','CategoryController@index')->name('index');

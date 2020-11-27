@@ -77,7 +77,10 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post=Post::whereId($id)->firstOrFail();
+        $categories=Category::all();
+        $categorySelected=$post->categories->pluck('id')->toArray();
+        return view('backend.posts.edit',compact('post','categories','categorySelected'));
     }
 
     /**
@@ -89,7 +92,15 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user=$request->user()->id;
+        $post=$this->postRepo->update($id,[
+            'title'=>$request->title,
+            'content'=>$request->content,
+            'slug'=>Str::slug($request->title),
+            'user_id'=>$user
+        ]);
+        $post->categories()->sync($request->category);
+        return redirect()->route('admin-post-index')->with('update','updated success');
     }
 
     /**
@@ -100,6 +111,10 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post=$this->postRepo->delete($id);
+        if($post==true){
+            return redirect()->route('admin-post-index')->with('success','Delete Success');
+        }
+        return redirect()->route('admin-post-index')->with('fail','Delete Fail');
     }
 }
